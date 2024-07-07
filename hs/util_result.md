@@ -1,6 +1,6 @@
 util.py, line 161 
 
-if total_volume <= rider.capa and len(merged_orders) <= {}:
+if total_volume <= rider.capa and len(merged_orders) <= {value}:
 
 | {value} | total_cost |
 | ----- | ----- |
