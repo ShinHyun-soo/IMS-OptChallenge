@@ -1,13 +1,11 @@
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score
+import matplotlib.pyplot as plt
 
-# 데이터 예제 (길어진 경우, 일부 데이터 생략)
+# 데이터 예제 (여기에 실제 데이터를 입력하세요)
 data = np.array([
-            [0, 28, 35.99762786853281, 125.98258379191876, 35.99512785853281,
+                [0, 28, 35.99762786853281, 125.98258379191876, 35.99512785853281,
              125.97787026191878, 600, 21, 2176],
             [1, 86, 36.01298758853281, 126.00438693191876, 36.00445698853281,
              126.00416261191876, 900, 12, 2680],
@@ -215,7 +213,7 @@ scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
 # 군집 개수의 범위 정의
-k_range = range(1, 20)  # 군집 개수를 1부터 10까지 테스트
+k_range = range(1, 20)  # 군집 개수를 1부터 20까지 테스트
 
 r2_scores = []
 
@@ -224,26 +222,43 @@ for k in k_range:
     kmeans.fit(X_scaled)
     labels = kmeans.labels_
     centers = kmeans.cluster_centers_
-    
-    # 클러스터링 결과로부터 각 클러스터의 데이터 점과 중심 간의 거리 계산
+
+    # 각 클러스터에 대한 R^2 값 계산
     distances = np.zeros(X_scaled.shape[0])
     for i in range(k):
         cluster_points = X_scaled[labels == i]
         cluster_center = centers[i]
         distances[labels == i] = np.linalg.norm(cluster_points - cluster_center, axis=1)
     
-    # 각 클러스터에 대한 R^2 값 계산
     mean_distance = np.mean(distances)
     total_distance = np.sum((X_scaled - np.mean(X_scaled, axis=0)) ** 2)
     r2 = 1 - (np.sum(distances ** 2) / total_distance)
     r2_scores.append(r2)
 
+# R-squared 값이 임계값을 초과하는 첫 번째 군집 수 찾기
+threshold = 0.6
+optimal_k = None
+for i, score in enumerate(r2_scores):
+    if score > threshold:
+        optimal_k = k_range[i]
+        break
+
+if optimal_k is not None:
+    print(f'Optimal number of clusters where R-squared exceeds {threshold}: {optimal_k}')
+else:
+    print(f'No cluster number found where R-squared exceeds {threshold}.')
+
 # 결과 시각화
 plt.figure(figsize=(10, 6))
-plt.plot(k_range, r2_scores, marker='o', linestyle='-', color='b')
+plt.plot(k_range, r2_scores, marker='o', linestyle='-', color='b', label='R-squared')
+plt.axhline(y=threshold, color='r', linestyle='--', label=f'Threshold ({threshold})')
 plt.xlabel('Number of Clusters')
 plt.ylabel('R-squared')
 plt.title('Elbow Method for Optimal Number of Clusters (R-squared)')
 plt.xticks(k_range)
 plt.grid(True)
+plt.legend()
+
 plt.show()
+
+optimal_k
