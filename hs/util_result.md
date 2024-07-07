@@ -1,11 +1,11 @@
 util.py, line 161 
 
-if total_volume <= rider.capa and len(merged_orders) <= {value}:
+if total_volume <= rider.capa and len(merged_orders) <= {id}:
 
 default : 5
 
-| {value} | total_cost |
-| -- | ----- |
+| id | total_cost |
+| - | ----- |
 | 1 | 326042.30000000005 |
 | 2 | 246256.2 |
 | 3 | 224045.89999999997 |
